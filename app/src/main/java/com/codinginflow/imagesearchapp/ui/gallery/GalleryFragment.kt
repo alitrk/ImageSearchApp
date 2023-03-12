@@ -9,25 +9,36 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.codinginflow.imagesearchapp.R
 import com.codinginflow.imagesearchapp.data.model.UnsplashPhoto
 import com.codinginflow.imagesearchapp.databinding.FragmentGalleryBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class GalleryFragment : Fragment(R.layout.fragment_gallery), UnsplashPhotoAdapter.OnItemClickListener{
 
     private val viewModel by viewModels<GalleryViewModel> ()
 
+    private val adapter = UnsplashPhotoAdapter(this)
     private var _binding: FragmentGalleryBinding? = null
     private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentGalleryBinding.inflate(inflater, container, false)
+
+
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentGalleryBinding.bind(view)
-        val adapter = UnsplashPhotoAdapter(this)
 
         binding.apply {
             recyclerView.setHasFixedSize(true)
@@ -41,7 +52,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery), UnsplashPhotoAdapte
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.photos.collectLatest { data ->
                 adapter.submitData(data)
             }

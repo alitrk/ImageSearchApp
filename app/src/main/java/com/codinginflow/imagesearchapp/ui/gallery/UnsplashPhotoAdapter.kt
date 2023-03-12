@@ -45,16 +45,7 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
         }
 
         fun bind(photo: UnsplashPhoto) {
-            binding.apply {
-                Glide.with(itemView)
-                    .load(photo.urls.regular)
-                    .centerCrop()
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .error(R.drawable.ic_error)
-                    .into(imageView)
-
-                textViewUserName.text = photo.user.username
-            }
+            binding.photo = photo
         }
     }
 
